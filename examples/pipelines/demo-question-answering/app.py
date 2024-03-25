@@ -252,18 +252,28 @@ def run(
 
     GPT_MODEL = configuration["llm_config"]["model"]
 
-    embedder = embedders.OpenAIEmbedder(
-        model="text-embedding-ada-002",
-        cache_strategy=DiskCache(),
-    )
+    # embedder = embedders.OpenAIEmbedder(
+    #     model="text-embedding-ada-002",
+    #     cache_strategy=DiskCache(),
+    # )
+
+    print("Start embedding now.")
+    embedder = embedders.SentenceTransformerEmbedder(model="intfloat/e5-small-v2")
+    print("Embedding done.")
 
     text_splitter = TokenCountSplitter(max_tokens=400)
 
-    chat = llms.OpenAIChat(
-        model=GPT_MODEL,
+    # chat = llms.OpenAIChat(
+    #     model=GPT_MODEL,
+    #     retry_strategy=ExponentialBackoffRetryStrategy(max_retries=6),
+    #     cache_strategy=DiskCache(),
+    #     temperature=0.05,
+    # )
+
+    print("launching llm chat")
+    chat = llms.LiteLLMChat(
+        model="ollama/mistral",
         retry_strategy=ExponentialBackoffRetryStrategy(max_retries=6),
-        cache_strategy=DiskCache(),
-        temperature=0.05,
     )
 
     host_config = configuration["host_config"]
